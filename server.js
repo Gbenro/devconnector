@@ -9,25 +9,19 @@ const posts = require('./routes/api/posts')
 
 const app = express()
 
-// body parser middleware
+// Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // DB Config
-const db = require('./config/Keys').mongoURI
-// const db = 'mongodb://gbenro:gbenro23@ds243254.mlab.com:43254/devconnector'
+// const db = require('./config/keys').mongoURI
+const db = require('./config/keys').url
 
 // Connect to MongoDB
 mongoose
   .connect(
     db,
-    {
-      auth: {
-        user: 'gbenro',
-        password: 'gbenro23'
-      },
-      useNewUrlParser: true
-    }
+    {}
   )
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err))
@@ -36,13 +30,13 @@ mongoose
 app.use(passport.initialize())
 
 // Passport Config
-require('./config/passport'(passport))
+require('./config/passport')(passport)
 
-// use Routes
+// Use Routes
 app.use('/api/users', users)
 app.use('/api/profile', profile)
 app.use('/api/posts', posts)
 
-const port = process.env.Port || 5000
+const port = process.env.PORT || 5000
 
-app.listen(port, () => console.log(`Server running on port : ${port}`))
+app.listen(port, () => console.log(`Server running on port ${port}`))

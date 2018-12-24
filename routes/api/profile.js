@@ -26,6 +26,7 @@ router.get(
   (req, res) => {
     const errors = {}
     Profile.findOne({ user: req.user.id })
+      .populate('user', ['name, avatar'])
       .then(profile => {
         if (!profile) {
           errors.noprofile = 'There is no profile for this user'
@@ -36,7 +37,41 @@ router.get(
       .catch(err => res.status(404).json(err))
   }
 )
+// @router GET api/profile/handle/:handle
+// @desc Get profile by handle
+// @access Public
+router.get('/handle/:handle', (req, res) => {
+  const errors = {}
+  Profile.findOne({ handle: req.params.handle })
+    .populate('user', ['name, avatar'])
+    .then(profile => {
+      if (!profile) {
+        errors.noprofile = 'There is no profile for this user'
+        res.status(404).json(errors)
+      }
+      res.json(profile)
+    })
+    .catch(err => res.status(404).json(err))
+})
 
+// @router GET api/profile/user/:user_id
+// @desc Get profile by user ID
+// @access Public
+router.get('/user/:user_id', (req, res) => {
+  const errors = {}
+  Profile.findOne({ user: req.params.user_id })
+    .populate('user', ['name, avatar'])
+    .then(profile => {
+      if (!profile) {
+        errors.noprofile = 'There is no profile for this user'
+        res.status(404).json(errors)
+      }
+      res.json(profile)
+    })
+    .catch(err =>
+      res.status(404).json({ profile: 'There is no profile for this user' })
+    )
+})
 // @router POST api/profile
 // @desc Create/Edit user profile
 // @access Private
@@ -48,7 +83,7 @@ router.post(
 
     // Check validation
     if (!isValid) {
-      // Return any erros with 400 status
+      // Return any errors with 400 status
       return res.status(400).json(errors)
     }
 
@@ -70,11 +105,11 @@ router.post(
     }
     // social
     profileFields.social = {}
-    if (req.body.youtube) profileFields.social = req.body.youtube
-    if (req.body.twitter) profileFields.social = req.body.twitter
-    if (req.body.facebook) profileFields.social = req.body.facebook
-    if (req.body.linkedin) profileFields.social = req.body.linkedin
-    if (req.body.instagram) profileFields.social = req.body.instagram
+    if (req.body.youtube) profileFields.social.youtube = req.body.youtube
+    if (req.body.twitter) profileFields.social.twitter = req.body.twitter
+    if (req.body.facebook) profileFields.social.facebook = req.body.facebook
+    if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin
+    if (req.body.instagram) profileFields.social.instagram = req.body.instagram
 
     Profile.findOne({ user: req.user.id }).then(profile => {
       if (profile) {

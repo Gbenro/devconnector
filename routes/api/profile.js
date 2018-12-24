@@ -5,6 +5,8 @@ const passport = require('passport')
 
 // Load Profile Validation
 const validateProfileInput = require('../../validation/profile')
+// Load Exeperience Validation
+const validateExperienceInput = require('../../validation/experience')
 
 // Load Profile Model
 const Profile = require('../../models/Profile')
@@ -37,6 +39,23 @@ router.get(
       .catch(err => res.status(404).json(err))
   }
 )
+// @router GET api/profile/all
+// @desc Get all profiles
+// @access Public
+router.get('/all', (req, res) => {
+  const errors = {}
+  Profile.find()
+    .populate('user', ['name, avatar'])
+    .then(profiles => {
+      if (!profiles) {
+        errors.noprofile = 'There is no profiles'
+        return res.status(404).json(errors)
+      }
+      res.json(profiles)
+    })
+    .catch(err => res.status(404).json({ profile: 'There is no profiles' }))
+})
+
 // @router GET api/profile/handle/:handle
 // @desc Get profile by handle
 // @access Public
@@ -131,6 +150,40 @@ router.post(
           new Profile(profileFields).save().then(profile => res.json(profile))
         })
       }
+    })
+  }
+)
+
+// @router POST api/profile/experience
+// @desc Add experience to profile
+// @access Private
+router.post(
+  '/experience',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateExperienceInput(req.body)
+
+    // Check validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors)
+    }
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      const newExp = {
+        title: req.body.title,
+        company: req.body.company,
+        location: req.body.location,
+        from: req.body.from,
+        to: req.body.to,
+        current: req.body.current,
+        description: req.body.description
+      }
+
+      // add to experience array
+
+      profile.experience.unshift(newExp)
+      profile.save().then(profile => res.json(profile))
     })
   }
 )

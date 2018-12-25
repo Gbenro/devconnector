@@ -32,8 +32,8 @@ router.get('/', (req, res) => {
 // @descG get post by ID/ single post
 // @access Public
 router.get('/:id', (req, res) => {
-  Post.findById(req.param.id)
-    .then(posts => res.json(post))
+  Post.findById(req.params.id)
+    .then(post => res.json(post))
     .catch(err =>
       res.status(404).json({ NoPostFound: 'No Post found with that ID' })
     )
@@ -94,4 +94,31 @@ router.delete(
   }
 )
 
+// @router Delete api/posts/like/:id
+// @desc Like a post
+// @access Private
+router.post(
+  '/like/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      Post.findById(req.params.id)
+        .then(post => {
+          // Check for post owner
+          if (
+            post.likes.filter(like => like.user.toString() === req.user.id)
+              .length > 0
+          ) {
+            return res
+              .status(400)
+              .json({ alreadyLiked: 'User already like this post' })
+          }
+          // Add the user id to the likes array
+          post.likes.unshift({ user: req.user.id })
+          post.save().then(post => res.json(post))
+        })
+        .catch(err => res.status(404).json({ postnotfound: 'No post found' }))
+    })
+  }
+)
 module.exports = router

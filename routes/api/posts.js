@@ -25,6 +25,17 @@ router.get('/', (req, res) => {
     .catch(err => res.status(404))
 })
 
+// @router GET api/post/:id
+// @descG get post by ID/ single post
+// @access Public
+router.get('/:id', (req, res) => {
+  Post.findById(req.params.id)
+    .then(posts => res.json(post))
+    .catch(err =>
+      res.status(404).json({ NoPostFound: 'No Post found with that ID' })
+    )
+})
+
 // @router POST api/posts
 // @desc Create post
 // @access Private
@@ -47,7 +58,11 @@ router.post(
       user: req.user.id
     })
 
-    newPost.save().then(post => res.json(post))
+    newPost
+      .save()
+      .then(post =>
+        res.json(post).json({ NoPostFound: 'No Post found with that ID' })
+      )
   }
 )
 module.exports = router

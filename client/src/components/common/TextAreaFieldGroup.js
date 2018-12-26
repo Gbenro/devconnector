@@ -27,7 +27,7 @@ const TextAreaFieldGroup = ({
   )
 }
 
-TextFieldGroup.propTypes = {
+TextAreaFieldGroup.propTypes = {
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   name: PropTypes.string,

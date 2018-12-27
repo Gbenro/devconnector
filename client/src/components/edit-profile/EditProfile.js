@@ -87,7 +87,8 @@ class CreateProfile extends Component {
         twitter: profile.twitter,
         facebook: profile.facebook,
         linkedin: profile.linkedin,
-        youtube: profile.youtube
+        youtube: profile.youtube,
+        instagram: profile.instagram
       });
     }
   }
@@ -192,6 +193,9 @@ class CreateProfile extends Component {
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
+            <Link to='/dashboard' className='btn btn-light'>
+                Go Back
+              </Link>
               <Link to="/dashboard" className="btn btn-light">
                 Go Back
               </Link>

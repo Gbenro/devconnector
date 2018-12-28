@@ -3,17 +3,13 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 class ProfileGithub extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      clientId: '26c196bacea7db10cf48',
-      clientSecret: '0885cb690e07d2a93a6afb0891fb552fd9f7aa53',
-      count: 5,
-      sort: 'created: asc',
-      repos: []
-    }
+  state = {
+    clientId: '27fe90e05855440479f8',
+    clientSecret: '273b207f85638e7d9537a6fa34ef38c50e2c24aa',
+    count: 5,
+    sort: 'created: asc',
+    repos: []
   }
-
   componentDidMount () {
     const { username } = this.props
     const { count, sort, clientId, clientSecret } = this.state
